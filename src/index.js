@@ -47,5 +47,5 @@ app.get('/talker/:id', async (req, res) => {
 app.post('/login', emailValidator, passValidator, (req, res) => {
   const tokenGen = token();
 
-  res.status(HTTP_OK_STATUS).json({ token: tokenGen });
+  return res.status(HTTP_OK_STATUS).json({ token: tokenGen });
 });
