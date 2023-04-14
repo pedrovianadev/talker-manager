@@ -2,6 +2,8 @@ const express = require('express');
 const fs = require('fs').promises;
 const path = require('path');
 const token = require('./utils/generator');
+const emailValidator = require('./utils/email');
+const passValidator = require('./utils/password');
 
 const app = express();
 app.use(express.json());
@@ -32,7 +34,7 @@ app.get('/talker/:id', async (req, res) => {
   const findId = talker.find(({ id }) => id === Number(req.params.id));
 
   if (!findId) {
-    return res.status(NOT_FOUND_STATUS).send({
+    return res.status(NOT_FOUND_STATUS).json({
       message: 'Pessoa palestrante não encontrada',
     });
   }
@@ -42,7 +44,7 @@ app.get('/talker/:id', async (req, res) => {
 // https://nodejs.org/api/crypto.html#cryptorandombytessize-callback
 // Ajudou a pensar a lógica para criar o gerador de token.
 
-app.post('/login', (req, res) => {
+app.post('/login', emailValidator, passValidator, (req, res) => {
   const tokenGen = token();
 
   res.status(HTTP_OK_STATUS).json({ token: tokenGen });
