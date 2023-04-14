@@ -22,4 +22,4 @@ app.get('/talker', async (req, res) => {
   const talker = JSON.parse(await fs.readFile(talkers, 'utf-8'));
 
   return res.status(HTTP_OK_STATUS).json(talker);
-})
+});
