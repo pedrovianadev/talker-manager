@@ -1,6 +1,7 @@
 const express = require('express');
 const fs = require('fs').promises;
 const path = require('path');
+const token = require('./utils/generator');
 
 const app = express();
 app.use(express.json());
@@ -36,4 +37,13 @@ app.get('/talker/:id', async (req, res) => {
     });
   }
   return res.status(HTTP_OK_STATUS).json(findId);
+});
+
+// https://nodejs.org/api/crypto.html#cryptorandombytessize-callback
+// Ajudou a pensar a lógica para criar o gerador de token.
+
+app.post('/login', (req, res) => {
+  const tokenGen = token();
+
+  res.status(HTTP_OK_STATUS).json({ token: tokenGen });
 });
