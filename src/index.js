@@ -95,9 +95,8 @@ app.put('/talker/:id',
             const index = talk.findIndex((i) => i.id === Number(id));
 
             if (index < 0) {
-              return res.status(NOT_FOUND_STATUS).json({
-                message: 'Pessoa palestrante não encontrada',
-              });
+              return res.status(NOT_FOUND_STATUS).json({ 
+                message: 'Pessoa palestrante não encontrada' });
             }
 
             talk[index] = talker;
