@@ -16,6 +16,7 @@ app.use(express.json());
 
 const HTTP_OK_STATUS = 200;
 const CREATED_STATUS = 201;
+const NO_CONTENT_STATUS = 204;
 const NOT_FOUND_STATUS = 404;
 const PORT = process.env.PORT || '3001';
 const talkers = path.resolve(__dirname, './talker.json');
@@ -105,3 +106,18 @@ app.put('/talker/:id',
 
             return res.status(HTTP_OK_STATUS).json(talker);
           });
+
+app.delete('/talker/:id', tokenValidator, async (req, res) => {
+  const id = Number(req.params.id);
+
+  const talk = await JSON.parse(await fs.readFile(talkers, 'utf-8'));
+
+  const index = talk.findIndex((i) => i.id === id);
+
+  // Aqui eu tenho que passar o que ele coloca no lugar por último, graças a isso não tava passando antes.
+  talk.splice(index, 1, '');
+
+  await fs.writeFile(talkers, JSON.stringify(talk), 'utf-8');
+
+  return res.status(NO_CONTENT_STATUS).json(talkers);
+});
