@@ -15,7 +15,7 @@ function emailValidator(req, res, next) {
         });
     }
 
-    next();
+    return next();
 }
 
 module.exports = emailValidator;

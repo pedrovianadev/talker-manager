@@ -1,14 +1,21 @@
 const express = require('express');
 const fs = require('fs').promises;
 const path = require('path');
-const token = require('./utils/generator');
-const emailValidator = require('./utils/email');
-const passValidator = require('./utils/password');
+const token = require('./middlewares/genToken');
+const emailValidator = require('./middlewares/email');
+const passValidator = require('./middlewares/password');
+const ageValidator = require('./middlewares/age');
+const nameValidator = require('./middlewares/name');
+const rateValidator = require('./middlewares/rate');
+const talkValidator = require('./middlewares/talk');
+const watchedAtValidator = require('./middlewares/watchedAt');
+const tokenValidator = require('./middlewares/validateToken');
 
 const app = express();
 app.use(express.json());
 
 const HTTP_OK_STATUS = 200;
+const CREATED_STATUS = 201;
 const NOT_FOUND_STATUS = 404;
 const PORT = process.env.PORT || '3001';
 const talkers = path.resolve(__dirname, './talker.json');
@@ -49,3 +56,24 @@ app.post('/login', emailValidator, passValidator, (req, res) => {
 
   return res.status(HTTP_OK_STATUS).json({ token: tokenGen });
 });
+
+app.post('/talker',
+          tokenValidator,
+          nameValidator,
+          talkValidator,
+          watchedAtValidator,
+          rateValidator,
+          ageValidator,
+          async (req, res) => {
+            const talk = await JSON.parse(await fs.readFile(talkers, 'utf-8'));
+
+            const id = talk.length + 1;
+
+            const body = { id, ...req.body };
+
+            talk.push(body);
+
+            await fs.writeFile(talkers, JSON.stringify(talk));
+
+            res.status(CREATED_STATUS).json( body );
+          });
