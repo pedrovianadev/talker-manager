@@ -119,5 +119,5 @@ app.delete('/talker/:id', tokenValidator, async (req, res) => {
 
   await fs.writeFile(talkers, JSON.stringify(talk), 'utf-8');
 
-  return res.status(NO_CONTENT_STATUS).json(talkers);
+  return res.status(NO_CONTENT_STATUS).json();
 });
