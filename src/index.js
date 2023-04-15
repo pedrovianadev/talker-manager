@@ -60,10 +60,10 @@ app.post('/login', emailValidator, passValidator, (req, res) => {
 app.post('/talker',
           tokenValidator,
           nameValidator,
+          ageValidator,
           talkValidator,
           watchedAtValidator,
           rateValidator,
-          ageValidator,
           async (req, res) => {
             const talk = await JSON.parse(await fs.readFile(talkers, 'utf-8'));
 
@@ -75,5 +75,34 @@ app.post('/talker',
 
             await fs.writeFile(talkers, JSON.stringify(talk));
 
-            res.status(CREATED_STATUS).json( body );
+            return res.status(CREATED_STATUS).json(body);
+          });
+
+app.put('/talker/:id',
+            tokenValidator,
+            nameValidator,
+            ageValidator,
+            talkValidator,
+            watchedAtValidator,
+            rateValidator,
+            async (req, res) => {
+            const id = Number(req.params.id);
+
+            const talker = { id, ...req.body };
+
+            const talk = await JSON.parse(await fs.readFile(talkers, 'utf-8'));
+
+            const index = talk.findIndex((i) => i.id === Number(id));
+
+            if (index < 0) {
+              return res.status(NOT_FOUND_STATUS).json({
+                message: 'Pessoa palestrante não encontrada',
+              });
+            }
+
+            talk[index] = talker;
+
+            await fs.writeFile(talkers, JSON.stringify(talk));
+
+            return res.status(HTTP_OK_STATUS).json(talker);
           });

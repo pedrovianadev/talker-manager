@@ -9,7 +9,7 @@ function rateValidator(req, res, next) {
         });
     }
 
-    if (rate < 1 || rate > 5 || !Number.isInteger(rate)) {
+    if (![1, 2, 3, 4, 5].includes(rate)) {
         return res.status(BAD_REQUEST_STATUS).json({
             message: 'O campo "rate" deve ser um número inteiro entre 1 e 5',
         });
